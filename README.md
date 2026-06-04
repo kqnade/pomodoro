@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# Pomodoro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A cozy, no-login pomodoro timer desktop app built with Tauri + React.
 
-Currently, two official plugins are available:
+## Install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Windows
+Download the `.msi` or `.exe` from [Releases](../../releases) and run it.
 
-## React Compiler
+> The app is built for Windows 10/11 and does not require admin rights.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### macOS
+Download the `.dmg` from [Releases](../../releases) and drag the app to Applications.
 
-## Expanding the ESLint configuration
+### Linux
+Download the `.deb` or `.AppImage` from [Releases](../../releases).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+For Fedora: `sudo dnf install webkit2gtk4.1-devel` (build dependency only).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Requirements
+- [Rust](https://rustup.rs/)
+- [Node.js](https://nodejs.org/) + [pnpm](https://pnpm.io/)
+- [mise](https://mise.jdx.dev/) (optional but recommended)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Windows setup
+```powershell
+# Install Rust
+winget install Rustlang.Rustup
+
+# Install pnpm
+npm install -g pnpm
+
+# Install dependencies
+pnpm install
+
+# Run dev
+pnpm tauri dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### macOS / Linux setup
+```bash
+# Install dependencies
+pnpm install
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Run dev
+pnpm tauri dev
+# or with mise
+mise run dev
 ```
+
+### Commands
+| Command | Description |
+|---|---|
+| `pnpm tauri dev` | Run in dev mode |
+| `pnpm test` | Run frontend tests (Vitest) |
+| `pnpm tauri build` | Build desktop installer |
+| `mise run ci` | Run full CI check |
+
+## Features
+
+- **No login** — everything stays on your machine
+- **Focus / Short Break / Long Break** cycles
+- **Stats** — today, this week, and total focus time (stored in localStorage)
+- **Customizable** — adjust durations and sessions per cycle
+- **Cozy UI** — matcha green, warm cream, soft shadows
+
+## Tech Stack
+
+- [Tauri v2](https://tauri.app/) — Rust-based desktop framework
+- [React 19](https://react.dev/) + TypeScript
+- [Vite](https://vitejs.dev/)
+- [Vitest](https://vitest.dev/) — testing with fake timers
