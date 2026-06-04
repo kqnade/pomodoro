@@ -1,122 +1,81 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import { usePomodoroTimer } from './hooks/usePomodoroTimer';
+import TimerDisplay from './components/TimerDisplay';
+import TimerControls from './components/TimerControls';
+import SessionIndicator from './components/SessionIndicator';
+import PhaseBadge from './components/PhaseBadge';
+import StatsPanel from './components/StatsPanel';
+import SettingsPanel from './components/SettingsPanel';
+import './App.css';
+
+const DEFAULT_CONFIG = {
+  focusDuration: 25,
+  shortBreakDuration: 5,
+  longBreakDuration: 15,
+  sessionsBeforeLongBreak: 4,
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const timer = usePomodoroTimer();
+  const [config, setConfig] = useState(DEFAULT_CONFIG);
+
+  const handleUpdateConfig = (newConfig: Partial<typeof DEFAULT_CONFIG>) => {
+    const updated = { ...config, ...newConfig };
+    setConfig(updated);
+    timer.updateConfig(newConfig);
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
+    <div className="app">
+      <header className="app-header">
+        <h1 className="app-title">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
           </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          Cozy Timer
+        </h1>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main className="app-main">
+        <PhaseBadge phase={timer.phase} />
+
+        <TimerDisplay
+          timeLeft={timer.timeLeft}
+          totalTime={timer.totalTime}
+          phase={timer.phase}
+          isRunning={timer.isRunning}
+        />
+
+        <SessionIndicator
+          sessionCount={timer.sessionCount}
+          sessionsBeforeLongBreak={config.sessionsBeforeLongBreak}
+        />
+
+        <TimerControls
+          isRunning={timer.isRunning}
+          onStart={timer.start}
+          onPause={timer.pause}
+          onReset={timer.reset}
+          onSkip={timer.skip}
+        />
+
+        <StatsPanel
+          todayFocusMinutes={timer.todayFocusMinutes}
+          weekFocusMinutes={timer.weekFocusMinutes}
+          totalFocusMinutes={timer.totalFocusMinutes}
+          cycles={timer.cycles}
+        />
+
+        <SettingsPanel
+          focusDuration={config.focusDuration}
+          shortBreakDuration={config.shortBreakDuration}
+          longBreakDuration={config.longBreakDuration}
+          sessionsBeforeLongBreak={config.sessionsBeforeLongBreak}
+          onUpdateConfig={handleUpdateConfig}
+        />
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
