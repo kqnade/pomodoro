@@ -33,6 +33,9 @@ jobs:
       - name: Lint frontend
         run: pnpm lint
 
+      - name: Install Rust clippy
+        run: rustup component add clippy
+
       - name: Lint Rust
         working-directory: src-tauri
         run: cargo clippy -- -D warnings
