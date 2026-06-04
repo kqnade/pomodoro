@@ -1,0 +1,40 @@
+[tools]
+rust = "latest"
+rust-analyzer = "latest"
+pnpm = "latest"
+
+[tasks.dev]
+description = "Start Tauri dev mode"
+run = "mise exec -- pnpm tauri dev"
+
+[tasks.build]
+description = "Build Tauri app"
+run = "mise exec -- pnpm tauri build"
+
+[tasks.test]
+description = "Run all tests (frontend + rust)"
+depends = ["test:frontend", "test:rust"]
+
+[tasks."test:frontend"]
+description = "Run frontend tests with Vitest"
+run = "mise exec -- pnpm vitest run"
+
+[tasks."test:rust"]
+description = "Run Rust tests"
+run = "cd src-tauri && mise exec -- cargo test"
+
+[tasks.lint]
+description = "Lint frontend and rust"
+depends = ["lint:frontend", "lint:rust"]
+
+[tasks."lint:frontend"]
+description = "Lint frontend with ESLint"
+run = "mise exec -- pnpm lint"
+
+[tasks."lint:rust"]
+description = "Lint Rust with clippy"
+run = "cd src-tauri && mise exec -- cargo clippy -- -D warnings"
+
+[tasks.ci]
+description = "Full CI check"
+depends = ["lint", "test"]
